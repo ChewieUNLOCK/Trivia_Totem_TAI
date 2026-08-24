@@ -1,0 +1,6 @@
+{
+  "_leeme": "Config de la ventana del totem. monitor: 'auto' elige la primera pantalla vertical; tambien acepta un numero (0 = principal, 1 = segunda, ...).",
+  "monitor": "auto",
+  "siempreEncima": true,
+  "abrirDevTools": false
+}

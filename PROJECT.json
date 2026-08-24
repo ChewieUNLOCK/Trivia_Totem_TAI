@@ -1,0 +1,66 @@
+{
+  "nombre": "Trivia Totem TAI",
+  "version": "V2",
+  "fecha": "2026-08-22",
+  "cliente": "TAI",
+  "descripcion": "Trivia tactil de recepcion. Totem vertical 1080x1920, modo kiosco, loop infinito y desatendido.",
+  "stack": [
+    "HTML",
+    "CSS",
+    "JavaScript plano",
+    "Electron"
+  ],
+  "sinBuild": true,
+  "sinDependencias": true,
+  "runtime": {
+    "electron": "43.4.1",
+    "carpeta": "runtime\\",
+    "origen": "https://github.com/electron/electron/releases/download/v43.4.1/electron-v43.4.1-win32-x64.zip",
+    "sha256": "c2ef9a5f65472c34d14bd3e67b7d14e66b0c01f124aba45263d6a4232160e13a",
+    "pesoDescomprimido": "357 MB",
+    "nota": "Va empaquetado: la maquina del totem no necesita Node.js ni npm ni internet. No se versiona; se recupera con descargar-runtime.bat."
+  },
+  "entrada": {
+    "navegador": "probar.bat",
+    "escritorio": "probar-electron.bat",
+    "totem": "start.bat"
+  },
+  "configuracion": {
+    "contenido": "quiz.js",
+    "ventana": "ventana.json",
+    "animaciones": "quiz.js -> config.animaciones"
+  },
+  "assets": {
+    "origen": "..\\..\\Assets",
+    "lienzo": "1081x1920",
+    "formato": "PNG con transparencia, una capa por elemento",
+    "tipografia": "Plus Jakarta Sans (variable)"
+  },
+  "contenido": {
+    "tematicas": 3,
+    "preguntasPorTematica": 4,
+    "segundosPorPregunta": 10,
+    "segundosFeedback": 5,
+    "segundosResultado": 7,
+    "segundosCierre": 3
+  },
+  "salidaKiosco": [
+    "Ctrl+Shift+Alt+Q (atajo global)",
+    "5 toques en la esquina superior derecha en 3 s",
+    "cerrar.bat (emergencia)"
+  ],
+  "docs": [
+    "README.md",
+    "..\\BRIEF.md",
+    "..\\AGENTS.md"
+  ],
+  "pendientes": [
+    "Prueba en el totem real (1080x1920 fisico, latencia del touch, arranque automatico, corte de luz)",
+    "Diseno: opciones C y D identicas en 18 Pregunta D Tai"
+  ],
+  "novedadesV2": [
+    "Animaciones sutiles: rebote al tocar, entrada escalonada de las opciones, feedback encadenado, pulso del contador, marcador que cuenta y latido en el boton EMPEZA.",
+    "Cada pantalla es un contenedor propio, lo que permite cruzar de una a otra.",
+    "Todo configurable en quiz.js -> config.animaciones; con activadas:false queda igual que V1."
+  ]
+}

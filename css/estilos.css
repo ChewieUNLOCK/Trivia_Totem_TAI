@@ -1,0 +1,169 @@
+/* Trivia Totem TAI — estilos
+   Todo lo visual lo aportan las placas de diseño. Este archivo solo se ocupa de
+   encajar el lienzo en la pantalla, de que el equipo se comporte como kiosco y
+   de las animaciones.
+
+   Las animaciones usan SOLO transform y opacity: son las dos propiedades que
+   Chromium resuelve en la placa de video. Animar filtros o sombras sobre
+   imágenes de 1081x1920 en la PC del tótem sería pedir problemas.
+   Las duraciones salen de quiz.js (config.animaciones), app.js las inyecta
+   como variables CSS. */
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("../assets/fonts/PlusJakartaSans-VariableFont_wght.ttf") format("truetype-variations");
+  font-weight: 200 800;
+  font-display: block;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0a58f0;        /* el azul de las placas: si algo tarda, no se ve un flash negro */
+}
+
+body {
+  /* Kiosco: nada de selección, nada de resaltado al tocar, nada de doble tap
+     para hacer zoom, nada de arrastrar. */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overscroll-behavior: none;
+}
+
+/* El cursor se esconde SOLO en el tótem. En el navegador y en el modo ventana
+   se ve, porque si no es imposible probar con mouse. La clase la pone app.js
+   cuando detecta que corre dentro de Electron en modo kiosco. */
+body.kiosco, body.kiosco .zona { cursor: none; }
+
+#escenario {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1081px;              /* diseño exportó 1081, no 1080. Ver README. */
+  height: 1920px;
+  transform: translate(-50%, -50%) scale(var(--escala, 1));
+  transform-origin: center center;
+  overflow: hidden;
+}
+
+/* Una pantalla = una pila de capas. La nueva entra por encima de la anterior,
+   que se queda opaca debajo hasta que la de arriba terminó de aparecer: así el
+   cruce nunca deja ver el fondo pelado entre una y otra. */
+.pantalla {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1081px;
+  height: 1920px;
+  opacity: 1;
+  transition: opacity var(--ms-pantalla, 260ms) ease-out;
+}
+.pantalla.entrando { opacity: 0; }
+.pantalla.saliendo { pointer-events: none; }   /* la de abajo deja de recibir toques */
+
+/* Cada capa es un PNG del tamaño del lienzo con transparencia, así que todas
+   van en 0,0 y se apilan en el orden en que se agregan al DOM.
+   El transform-origin lo pone app.js en el centro del botón de esa capa: sin
+   eso, escalar una capa escalaría alrededor del centro de la pantalla y el
+   botón saldría volando. */
+.capa {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1081px;
+  height: 1920px;
+  pointer-events: none;       /* los clicks los manejan las zonas, no las imágenes */
+  -webkit-user-drag: none;
+  user-drag: none;
+  transition: transform var(--ms-rebote, 110ms) ease-out;
+}
+
+.capa.apagada {
+  opacity: var(--opacidad-apagada, 0.35);
+  animation: apagarse var(--ms-apagar, 300ms) ease-out both;
+}
+
+/* Entrada escalonada de las opciones. A y C están alineadas a la izquierda en
+   las placas y B y D a la derecha, así que cada una entra desde su lado.
+   fill-mode backwards y no both: durante el delay vale el primer fotograma,
+   pero al terminar la capa vuelve a su estado natural. Si quedara "both", el
+   transform de la animación pisaría para siempre al de .apretada. */
+.capa.entra-izq { animation: entraIzq var(--ms-entrada, 320ms) cubic-bezier(.22,.9,.3,1) backwards; }
+.capa.entra-der { animation: entraDer var(--ms-entrada, 320ms) cubic-bezier(.22,.9,.3,1) backwards; }
+.capa.pop       { animation: pop      var(--ms-pop, 320ms)     cubic-bezier(.22,.9,.3,1) backwards; }
+
+/* El ¡EMPEZÁ! del menú del tema. Es la pantalla donde el tótem espera quieto
+   todo el día: que algo respire hace que de lejos se note que está vivo. */
+.capa.latido { animation: latido 2.6s ease-in-out infinite; }
+
+/* Va último a propósito: al apretar tiene que ganarle a cualquier animación
+   anterior (misma especificidad, gana la regla de más abajo). */
+.capa.apretada { animation: none; transform: scale(0.96); }
+
+@keyframes entraIzq {
+  from { opacity: 0; transform: translateX(-46px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes entraDer {
+  from { opacity: 0; transform: translateX(46px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes pop {
+  0%   { opacity: 0; transform: scale(0.93); }
+  60%  { opacity: 1; transform: scale(1.025); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes apagarse {
+  from { opacity: 1; }
+  to   { opacity: var(--opacidad-apagada, 0.35); }
+}
+@keyframes latido {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.018); }
+}
+
+/* Los dos únicos textos que dibuja la app: el contador y el marcador. */
+.pintura {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+/* Zonas táctiles invisibles sobre los botones de las placas. */
+.zona {
+  position: absolute;
+  background: transparent;
+}
+
+/* Se enciende con ?debug=1 para chequear que las zonas caen sobre los botones. */
+body.debug .zona {
+  background: rgba(255, 0, 128, 0.28);
+  outline: 2px solid #ff0080;
+}
+
+#error {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 8px 12px;
+  font: 14px/1.4 monospace;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  max-width: 100%;
+  z-index: 99;
+}
+#error[hidden] { display: none; }
+
+/* Si el sistema pide menos movimiento, se respeta. En el tótem no aplica, pero
+   es gratis y evita sorpresas en la máquina de quien lo esté probando. */
+@media (prefers-reduced-motion: reduce) {
+  .pantalla, .capa { transition: none; }
+  .capa.entra-izq, .capa.entra-der, .capa.pop, .capa.latido { animation: none; }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "trivia-totem-tai",
+  "version": "1.0.0",
+  "description": "Trivia tactil para el totem de recepcion de TAI (1080x1920 vertical, modo kiosco).",
+  "main": "main.js",
+  "private": true,
+  "_leeme": "No hay dependencias ni npm install. El runtime de Electron viene descomprimido en runtime\\ y se arranca con start.bat. Este package.json esta solo para que Electron sepa cual es el archivo principal.",
+  "electronVersion": "43.4.1"
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Trivia Totem TAI</title>
+<!-- Sin CDN ni red: el totem puede estar sin internet. Todo es local. -->
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <!-- El escenario mide siempre 1081x1920 (el lienzo real de las placas) y se
+       escala por CSS para entrar en la pantalla. Todo se posiciona en esas
+       coordenadas, asi las medidas sacadas de los PNG valen tal cual. -->
+  <div id="escenario"></div>
+  <div id="error" hidden></div>
+
+  <!-- quiz.js es el archivo de configuración: temáticas, orden, placas de cada
+       pregunta, cuál es la correcta, tiempos y zonas táctiles. Es JSON común
+       envuelto en "window.QUIZ =". Va como .js y no como .json porque Chrome
+       bloquea fetch() sobre file:// y este index tiene que poder abrirse a mano
+       desde el disco, sin levantar ningún servidor. -->
+  <script src="quiz.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

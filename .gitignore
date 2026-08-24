@@ -1,0 +1,4 @@
+# El runtime de Electron pesa ~357 MB descomprimido. No se versiona: se
+# recupera corriendo descargar-runtime.bat (verifica el SHA256 oficial).
+# OJO: si se copia la carpeta al totem, runtime\ TIENE que ir incluida.
+runtime/
